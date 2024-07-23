@@ -21,7 +21,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 * * * * ?")
     public void generateDailySummary() {
-        LocalDate today = LocalDate.now().plusDays(1);
+        LocalDate today = LocalDate.now();
         logger.info("Generating daily summary for {}", today);
 
         try {
