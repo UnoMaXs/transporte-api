@@ -40,6 +40,7 @@ docker-compose up --build
 ### Verificar el Despliegue
 
 - La aplicación Spring Boot se ejecutará en \`http://localhost:8080\`.
+- la aplicación al tener swagger es posible de manipular en \`http://localhost:8080/swagger-ui/index.html\`.
 - MongoDB estará accesible en \`mongodb://localhost:27017\`.
 - Kafka estará accesible en \`localhost:9092\`.
 
