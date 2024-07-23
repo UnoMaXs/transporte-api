@@ -66,7 +66,7 @@ curl -X POST http://localhost:8080/api/v1/transactions \
 
 ### Ejemplo con Swagger
 
-![App Screenshot](testSwagger.png "ejemplo de swagger")
+![App Screenshot](TestSwagger.png "ejemplo de swagger")
 
 
 ## Documentación
