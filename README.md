@@ -17,7 +17,7 @@ Este proyecto es un sistema de procesamiento de transacciones para una empresa d
 Clona el repositorio público desde GitHub.
 
 \`\`\`bash
-git clone <URL_DEL_REPOSITORIO>
+git clone <https://github.com/UnoMaXs/transporte-api>
 cd backend-transporte-api
 \`\`\`
 
