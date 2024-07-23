@@ -1,4 +1,4 @@
-package com.example.backendtransporteapi.config;
+package com.example.backendtransporteapi.utils.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;

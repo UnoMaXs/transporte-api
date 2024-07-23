@@ -1,13 +1,11 @@
 package com.example.backendtransporteapi.repository;
 
 import com.example.backendtransporteapi.model.TransactionModel;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import reactor.core.publisher.Flux;
 
-@Repository
-public interface TransactionRepository extends MongoRepository<TransactionModel, String> {
-    List<TransactionModel> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
+public interface TransactionRepository extends ReactiveCrudRepository<TransactionModel, Long> {
+    Flux<TransactionModel> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
 }
