@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends MongoRepository<TransactionModel, String> {
-
+    List<TransactionModel> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
 }

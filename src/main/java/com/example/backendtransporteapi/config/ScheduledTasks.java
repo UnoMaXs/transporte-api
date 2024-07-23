@@ -15,9 +15,11 @@ public class ScheduledTasks {
         this.summaryService = summaryService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void generateDailySummary() {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-        summaryService.generateDailySummary(yesterday);
+        LocalDate today = LocalDate.now().plusDays(1);
+        System.out.println("Generating daily summary for " + today);
+        summaryService.generateDailySummary(today);
     }
 }
+
