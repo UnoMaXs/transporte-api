@@ -12,13 +12,15 @@ import reactor.kafka.sender.KafkaSender;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.backendtransporteapi.utils.config.Constants.KAFKA_BOOTSTRAP_SERVERS;
+
 @Configuration
 public class KafkaProducerConfig {
 
     @Bean
     public KafkaSender<String, TransactionModel> kafkaSender() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_BOOTSTRAP_SERVERS);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 

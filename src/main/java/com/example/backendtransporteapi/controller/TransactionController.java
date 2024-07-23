@@ -1,15 +1,19 @@
 package com.example.backendtransporteapi.controller;
 
 import com.example.backendtransporteapi.model.TransactionModel;
-import com.example.backendtransporteapi.model.dto.TransactionDTO;
+import com.example.backendtransporteapi.model.dto.request.TransactionRequest;
+import com.example.backendtransporteapi.model.dto.response.TransactionResponse;
 import com.example.backendtransporteapi.service.TransactionService;
 import com.example.backendtransporteapi.utils.mappers.TransactionMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import static com.example.backendtransporteapi.utils.config.Constants.PATH_POST;
+import static com.example.backendtransporteapi.utils.config.Constants.PATH_URI;
+
 @RestController
-@RequestMapping("/api/v1/transactions")
+@RequestMapping(PATH_URI)
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -20,11 +24,11 @@ public class TransactionController {
         this.transactionMapper = transactionMapper;
     }
 
-    @PostMapping
+    @PostMapping(PATH_POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<TransactionDTO> createTransaction(@RequestBody TransactionDTO transactionDTO) {
-        TransactionModel transactionModel = transactionMapper.toModel(transactionDTO);
+    public Mono<TransactionResponse> createTransaction(@RequestBody TransactionRequest transactionRequest) {
+        TransactionModel transactionModel = transactionMapper.toModel(transactionRequest);
         return transactionService.saveTransaction(transactionModel)
-                .map(transactionMapper::toDTO);
+                .map(transactionMapper::toResponse);
     }
 }

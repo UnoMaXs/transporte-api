@@ -1,4 +1,4 @@
-package com.example.backendtransporteapi.model.dto;
+package com.example.backendtransporteapi.model.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class TransactionDTO {
+public class TransactionResponse {
 
     private String transactionId;
     private LocalDateTime timestamp;

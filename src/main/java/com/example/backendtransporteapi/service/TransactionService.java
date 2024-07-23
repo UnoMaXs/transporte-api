@@ -2,9 +2,9 @@ package com.example.backendtransporteapi.service;
 
 import com.example.backendtransporteapi.model.TransactionModel;
 import com.example.backendtransporteapi.repository.TransactionRepository;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
 
@@ -19,11 +19,16 @@ public class TransactionService {
         this.kafkaSender = kafkaSender;
     }
 
+    @Retry(name = "transactionService")
     public Mono<TransactionModel> saveTransaction(TransactionModel transaction) {
         return transactionRepository.save(transaction)
-                .publishOn(Schedulers.boundedElastic())
-                .doOnSuccess(savedTransaction -> kafkaSender.send(Mono.just(SenderRecord.create("transactionTopic", null, null, null, savedTransaction, null)))
-                        .subscribe());
+                .flatMap(savedTransaction ->
+                        kafkaSender.send(Mono.just(SenderRecord.create("transactionTopic", null, null, null, savedTransaction, null)))
+                                .then(Mono.just(savedTransaction))
+                )
+                .onErrorResume(error -> {
+                    return Mono.error(new RuntimeException("Error saving the transaction or sending to Kafka", error));
+                });
     }
 
 }
