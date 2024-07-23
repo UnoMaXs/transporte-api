@@ -50,7 +50,7 @@ curl -X POST http://localhost:8080/api/v1/transactions \
 
 1. Abre Postman.
 2. Crea una nueva solicitud POST.
-3. Establece la URL a http://localhost:8080/api/v1/transactions\.
+3. Establece la URL a http://localhost:8080/api/v1/transactions.
 4. Establece el tipo de contenido a \`application/json\`.
 5. En el cuerpo de la solicitud, añade el siguiente JSON:
 
