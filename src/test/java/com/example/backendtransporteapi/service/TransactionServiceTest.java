@@ -53,4 +53,43 @@ class TransactionServiceTest {
         verify(transactionRepository).save(transactionModel);
         verify(kafkaSender).send(any(Mono.class));
     }
+
+    @Test
+    void saveTransaction_shouldHandleErrorWhenSaving() {
+        // Arrange
+        when(transactionRepository.save(any(TransactionModel.class))).thenReturn(Mono.error(new RuntimeException("Database error")));
+
+        // Act
+        Mono<TransactionModel> result = transactionService.saveTransaction(transactionModel);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable -> throwable instanceof RuntimeException &&
+                        throwable.getMessage().equals("Error saving the transaction or sending to Kafka") &&
+                        throwable.getCause().getMessage().equals("Database error"))
+                .verify();
+
+        verify(transactionRepository).save(transactionModel);
+        verify(kafkaSender, never()).send(any(Mono.class));
+    }
+
+    @Test
+    void saveTransaction_shouldHandleErrorWhenSendingToKafka() {
+        // Arrange
+        when(transactionRepository.save(any(TransactionModel.class))).thenReturn(Mono.just(transactionModel));
+        when(kafkaSender.send(any(Mono.class))).thenReturn(Flux.error(new RuntimeException("Kafka error")));
+
+        // Act
+        Mono<TransactionModel> result = transactionService.saveTransaction(transactionModel);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable -> throwable instanceof RuntimeException &&
+                        throwable.getMessage().equals("Error saving the transaction or sending to Kafka") &&
+                        throwable.getCause().getMessage().equals("Kafka error"))
+                .verify();
+
+        verify(transactionRepository).save(transactionModel);
+        verify(kafkaSender).send(any(Mono.class));
+    }
 }
