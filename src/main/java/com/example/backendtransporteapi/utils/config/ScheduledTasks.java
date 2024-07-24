@@ -19,9 +19,9 @@ public class ScheduledTasks {
         this.summaryService = summaryService;
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void generateDailySummary() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now().minusDays(1);
         logger.info("Generating daily summary for {}", today);
 
         try {
