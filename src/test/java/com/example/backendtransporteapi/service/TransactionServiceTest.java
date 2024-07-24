@@ -2,6 +2,9 @@ package com.example.backendtransporteapi.service;
 
 import com.example.backendtransporteapi.model.TransactionModel;
 import com.example.backendtransporteapi.repository.TransactionRepository;
+import com.example.backendtransporteapi.utils.exceptions.DatabaseException;
+import com.example.backendtransporteapi.utils.exceptions.KafkaException;
+import com.example.backendtransporteapi.utils.exceptions.TransactionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -64,9 +67,11 @@ class TransactionServiceTest {
 
         // Assert
         StepVerifier.create(result)
-                .expectErrorMatches(throwable -> throwable instanceof RuntimeException &&
-                        throwable.getMessage().equals("Error saving the transaction or sending to Kafka") &&
-                        throwable.getCause().getMessage().equals("Database error"))
+                .expectErrorMatches(throwable -> throwable instanceof TransactionException &&
+                        throwable.getMessage().equals("Error occurred during the transaction process") &&
+                        throwable.getCause() != null &&
+                        throwable.getCause() instanceof DatabaseException &&
+                        throwable.getCause().getMessage().equals("Error saving the transaction to the database"))
                 .verify();
 
         verify(transactionRepository).save(transactionModel);
@@ -84,9 +89,11 @@ class TransactionServiceTest {
 
         // Assert
         StepVerifier.create(result)
-                .expectErrorMatches(throwable -> throwable instanceof RuntimeException &&
-                        throwable.getMessage().equals("Error saving the transaction or sending to Kafka") &&
-                        throwable.getCause().getMessage().equals("Kafka error"))
+                .expectErrorMatches(throwable -> throwable instanceof TransactionException &&
+                        throwable.getMessage().equals("Error occurred during the transaction process") &&
+                        throwable.getCause() != null &&
+                        throwable.getCause() instanceof KafkaException &&
+                        throwable.getCause().getMessage().equals("Error sending the transaction to Kafka"))
                 .verify();
 
         verify(transactionRepository).save(transactionModel);

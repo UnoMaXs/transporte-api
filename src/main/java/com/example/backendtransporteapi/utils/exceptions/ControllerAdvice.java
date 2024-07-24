@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(annotations = RestController.class)
 public class ControllerAdvice {
 
-    MessagesService messagesService;
+    private final MessagesService messagesService;
     private static final Logger LOGGER = LogManager.getLogger(ControllerAdvice.class);
 
     public ControllerAdvice(MessagesService messagesService) {
@@ -22,19 +22,34 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler(NotValidArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleNotValidArgumentException(NotValidArgumentException notValidArgumentException) {
-        return getErrorResponseEntity(notValidArgumentException, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleNotValidArgumentException(NotValidArgumentException exception) {
+        return getErrorResponseEntity(exception, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleNotValidArgumentException(IllegalArgumentException illegalArgumentException) {
-        return getErrorResponseEntity(illegalArgumentException, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
+        return getErrorResponseEntity(exception, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<ErrorResponse> handleDatabaseException(DatabaseException exception) {
+        return getErrorResponseEntity(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(KafkaException.class)
+    public ResponseEntity<ErrorResponse> handleKafkaException(KafkaException exception) {
+        return getErrorResponseEntity(exception, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(TransactionException.class)
+    public ResponseEntity<ErrorResponse> handleTransactionException(TransactionException exception) {
+        return getErrorResponseEntity(exception, HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ErrorResponse> getErrorResponseEntity(Exception exception, HttpStatus httpStatus) {
         String message = messagesService.getMessage(exception.getMessage());
-        LOGGER.error(message);
+        LOGGER.error("Exception occurred: ", exception);
         ErrorResponse errorResponse = new ErrorResponse(message, httpStatus);
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
 }
-
